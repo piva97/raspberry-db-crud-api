@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const weather = require('../services/weather');
+const weatherCloud = require('../services/weather-cloud');
 
 /* GET quotes listing. */
 router.get('/', function(req, res, next) {
@@ -15,6 +16,7 @@ router.get('/', function(req, res, next) {
 /* POST quote */
 router.post('/', function(req, res, next) {
   try {
+    weatherCloud.sendToWeatherCloud();
     res.json(weather.create(req.body));
   } catch(err) {
     console.error(`Error while adding quotes `, err.message);
