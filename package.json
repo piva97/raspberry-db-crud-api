@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/piva97/raspberry-db-crud-api#readme",
   "dependencies": {
+    "better-sqlite3": "^7.5.0",
     "express": "^4.17.3",
     "sqlite3": "^5.0.2"
   }
