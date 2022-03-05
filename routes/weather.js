@@ -22,7 +22,8 @@ router.post('/', function(req, res, next) {
   }
   try {
     if(count % 2){
-      //weatherCloud.sendToWeatherCloud(req.body);
+      console.log("inviato");
+      weatherCloud.sendToWeatherCloud(new_req);
     }
     
     weatherDb.create(new_req);
