@@ -22,21 +22,19 @@ router.post('/', function(req, res, next) {
   }
   try {
     if(count % 2){
-      console.log("inviato");
       weatherCloud.sendToWeatherCloud(new_req);
     }
     
     weatherDb.create(new_req);
     count = count + 1;
     res.sendStatus(200);
-    
   } catch(err) {
     console.error(`Error while adding data `, err.message);
     next(err);
   }
 });
 
-router.post('/prova', function(req, res, next) {
+router.post('/ret-req', function(req, res, next) {
   console.log(req.body);
   res.statusCode=200;
   res.end();
