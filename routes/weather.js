@@ -1,27 +1,44 @@
 const express = require('express');
 const router = express.Router();
-const weather = require('../services/weather');
-const weatherCloud = require('../services/weather-cloud');
+const weatherDb = require('../services/weatherDb');
+const weatherCloud = require('../services/weatherCloud');
+var count = 1;
 
-/* GET quotes listing. */
 router.get('/', function(req, res, next) {
   try {
-    res.json(weather.getMultiple(req.query.page));
+    res.json(weatherDb.getMultiple(req.query.page));
   } catch(err) {
-    console.error(`Error while getting quotes `, err.message);
+    console.error(`Error while getting data `, err.message);
     next(err);
   }
 });
 
-/* POST quote */
 router.post('/', function(req, res, next) {
+  new_req = {
+    temperature : Math.round(req.body.temperature * 1e1) /1e1,
+    humidity: Math.floor(req.body.humidity),
+    pressure: Math.round((req.body.pressure / 100) * 1e2) /1e2 ,
+    temperature_bme: Math.round(req.body.temperature_bme * 1e1) /1e1
+  }
   try {
-    weatherCloud.sendToWeatherCloud();
-    res.json(weather.create(req.body));
+    if(count % 2){
+      //weatherCloud.sendToWeatherCloud(req.body);
+    }
+    
+    weatherDb.create(new_req);
+    count = count + 1;
+    res.sendStatus(200);
+    
   } catch(err) {
-    console.error(`Error while adding quotes `, err.message);
+    console.error(`Error while adding data `, err.message);
     next(err);
   }
+});
+
+router.post('/prova', function(req, res, next) {
+  console.log(req.body);
+  res.statusCode=200;
+  res.end();
 });
 
 module.exports = router;

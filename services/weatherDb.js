@@ -1,4 +1,4 @@
-const db = require('../services/db');
+const db = require('./db');
 const config = require('../config');
 
 function getMultiple(page = 1) {
@@ -12,7 +12,7 @@ function getMultiple(page = 1) {
   }
 }
 
-function getMultiple(page = 1) {
+function getMultipleLimited(page = 1) {
   const offset = (page - 1) * config.listPerPage;
   const data = db.query(`SELECT * FROM weather LIMIT ?,?`, [offset, config.listPerPage]);
   const meta = {page};
@@ -23,6 +23,12 @@ function getMultiple(page = 1) {
   }
 }
 
+function getMultiple() {
+  const data = db.query('SELECT datetime(timestamp, \'unixepoch\') as timestamp, temperatura, umidita, pressione, temp2 FROM weather');
+  //const data = db.query('SELECT * FROM weather');
+  return data;
+}
+
 function validateCreate(weather) {
   let messages = [];
 
@@ -30,10 +36,6 @@ function validateCreate(weather) {
 
   if (!weather) {
     messages.push('No object is provided');
-  }
-
-  if (!weather.timestamp) {
-    messages.push('PK timestamp is empty');
   }
   
   if (messages.length) {
@@ -46,14 +48,15 @@ function validateCreate(weather) {
 
 function create(weatherObj) {
   validateCreate(weatherObj);
-  const {timestamp, temperatura, temp2, umidita, pressione} = weatherObj;
-  const result = db.run('INSERT INTO weather (timestamp, temperatura, temp2, umidita, pressione) VALUES (@timestamp, @temperatura, @temp2, @umidita, @pressione)', {timestamp, temperatura, temp2, umidita, pressione});
+  const timestamp=Math.floor(Date.now()/1000);
+  const {temperature, temperature_bme, humidity, pressure} = weatherObj;
+  const result = db.run('INSERT INTO weather (timestamp, temperatura, temp2, umidita, pressione) VALUES (@timestamp, @temperature, @temperature_bme, @humidity, @pressure)', {timestamp, temperature, temperature_bme, humidity, pressure});
   
   let message = 'Error in creating record';
   if (result.changes) {
-    message = 'Record created successfully';
+    message = 'Record created successfully ' + result.lastInsertRowid;
   }
-
+  console.log(message);
   return {message};
 }
 
