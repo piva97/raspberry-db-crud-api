@@ -24,7 +24,7 @@ function getMultipleLimited(page = 1) {
 }
 
 function getMultiple() {
-  const data = db.query('SELECT datetime(timestamp, \'unixepoch\') as timestamp, temperatura, umidita, pressione, temp2 FROM weather');
+  const data = db.query('SELECT datetime(timestamp, \'unixepoch\') as timestamp, temperatura, umidita, pressione, temp2, heat_index FROM weather');
   //const data = db.query('SELECT * FROM weather');
   return data;
 }
@@ -49,8 +49,8 @@ function validateCreate(weather) {
 function create(weatherObj) {
   validateCreate(weatherObj);
   const timestamp=Math.floor(Date.now()/1000);
-  const {temperature, temperature_bme, humidity, pressure} = weatherObj;
-  const result = db.run('INSERT INTO weather (timestamp, temperatura, temp2, umidita, pressione) VALUES (@timestamp, @temperature, @temperature_bme, @humidity, @pressure)', {timestamp, temperature, temperature_bme, humidity, pressure});
+  const {temperature, temperature_bme, humidity, pressure, heatIndex} = weatherObj;
+  const result = db.run('INSERT INTO weather (timestamp, temperatura, temp2, umidita, pressione, heat_index) VALUES (@timestamp, @temperature, @temperature_bme, @humidity, @pressure, @heatIndex)', {timestamp, temperature, temperature_bme, humidity, pressure, heatIndex});
   
   let message = 'Error in creating record';
   if (result.changes) {
